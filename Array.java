@@ -5,32 +5,32 @@ public class Array {
     Random random = new Random();
 
     private final int N=4,M=5;
-    private final char[][] finalArray = new char[N][M];//Τελικός πίνακας
-    private final char[][] charArray = new char[N/2][M];//Ν/2 περιέχει τα γράμματα
-    private final char[][] stars = new char[N][M];//Πίνακας με κρυμμένους χαρακτήρες
+    private final char[][] finalArray = new char[N][M];
+    private final char[][] charArray = new char[N/2][M];//Contains single chars only
+    private final char[][] stars = new char[N][M];//Array with hidden characters
     int i=10;
 
     public Array(){
         createArray();
         fillArray(); fillStars();
         print(finalArray);
-        while(p1.begin());// Αναμονή να είναι έτοιμος ο παίκτης
-        while(i>0){System.out.println(); i--;} //Κρύψιμο που πίνακα με τους χαρακτήρες
+        while(p1.begin());//Waits for user to type yes
+        while(i>0){System.out.println(); i--;} //Creating enough space to hide the character array
         print(stars);
         appear();
     }
 
-    //Συνάρτηση που τοποθετεί τα ζεύγη στον τελικό πίνακα
+    //Transfers and creates the final array using the charArray
     private void fillArray(){
         for(int i=0;i<charArray.length;i++){
             for(int j=0;j<charArray[i].length;j++){
                 char c = charArray[i][j];
-                int times=2;//Πέρασμα του γράμματος 2 φορές μόνο
+                int times=2;//Every character must be a pair (exists two times)
                 
                 while(times>0){
-                    int num1 = random.nextInt(N);//Τυχαίες θέσεις για τον τελικό πίνακα
+                    int num1 = random.nextInt(N);//Random positions in the final array
                     int num2 = random.nextInt(M);
-                    if(!Character.isLetter(finalArray[num1][num2]) && times>0){
+                    if(!Character.isLetter(finalArray[num1][num2]) && times>0){ //If there is still space in the array
                         finalArray[num1][num2]=charArray[i][j];
                         times--;
                     }
@@ -39,7 +39,7 @@ public class Array {
         }         
     }
     
-    //Δημιουργεί μοναδικά γράμματα για τον πίνακα charArray
+    //In the charArray every char must exist only once
     private void createArray(){
         for(int i=0;i<charArray.length;i++){
             for(int j=0;j<charArray[i].length;j++){           
@@ -54,7 +54,7 @@ public class Array {
         }
     }
 
-    //Ελέγχει αν το γράμμα που δίνουμε υπάρχει ήδη στον πίνακα
+    //Checks if the given char is in the array
     private boolean checkChar(char [][] arr,char c){
         for(int i=0;i<arr.length;i++) {
             for(int j=0;j<arr[i].length;j++) {
@@ -65,8 +65,8 @@ public class Array {
     }
 
     /*
-     * Απο εδώ και κάτω υπάρχουν οι λειτουργίες και
-     * για τον πίνακα με τους κρυμμένους χαρακτήρες
+     * From now on there will be also functions which were
+     * used to edit the array with hidden characters
      */
 
     private void fillStars(){
@@ -75,10 +75,10 @@ public class Array {
                stars[i][j]='*';
     }
 
-    //Έλεγχος αν ο χρήστης έχει εισάγει σωστές θέσεις ζεύγους
+    //Checking if player guessed the right positions for a pair
     private boolean checkPos(int x1,int y1,int x2,int y2){
-        if(x1==x2 && y1==y2) return false;
-        if(x1>N || x2>N || y1>M||y2>M) return false;
+        if(x1==x2 && y1==y2) return false; //Player cannot give the same position
+        if(x1>N || x2>N || y1>M||y2>M) return false; //or a number greater than the allocated space of the array
 
         if(finalArray[x1][y1] == finalArray[x2][y2])
             return true;
@@ -86,19 +86,19 @@ public class Array {
             return false;
     }
 
-    //Συνάρτηση αλλαγής χαρακτήρων του πίνακα stars
+    //If the guess is right the stars transforms now to the visible characters
     private void appear(){
-        int pairs=0;//Μέτρηση ζευγών, στα 10 σταματάει το παιχνίδι
+        int pairs=0;//If pairs==10, player have found all of them
 
         while(p1.getTries()>0 && pairs!=10) {
-            p1.givePos();//Πέρασμα συντεταγμένων του χρήστη
+            p1.givePos();
             if(checkPos(p1.getX1(), p1.getY1(), p1.getX2(), p1.getY2())) {
-                stars[p1.getX1()][p1.getY1()] = stars[p1.getX2()][p1.getY2()] //Αλλάζει το * σε χαρακτήρα
+                stars[p1.getX1()][p1.getY1()] = stars[p1.getX2()][p1.getY2()] // * -> character
                  =  finalArray[p1.getX1()][p1.getY1()];
 
-                p1.setRounds();//Αυξάνει τον γύρο κάθε φορά
+                p1.setRounds();//Every time player guesses right, they go to the next round
                 print(stars);
-                pairs++;//Μόλις ο χρήστης βρει ένα ζευγάρι, αυτό αυξάνεται
+                pairs++;
             }else{
                 System.out.println("Wrong positions! Try again...");
                 p1.setTries();
@@ -109,7 +109,7 @@ public class Array {
         endgame();
     }
 
-    //Τυπώνει τον δοσμένο πίνακα
+    //Prints the array
     private void print(char[][] arr){
         for(int i=0;i<arr.length;i++) {
             for(int j=0;j<arr[i].length;j++)
